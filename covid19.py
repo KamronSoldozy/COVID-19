@@ -7,6 +7,7 @@ import copy
 from scipy.optimize import curve_fit
 from scipy import stats
 from datetime import datetime
+from datetime import date
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
@@ -616,19 +617,18 @@ def sigmoid(x, L, x0, k, b):
 
 def sigmoid_simple(x, L, r):
     return (L / (1 + r**x))
+"""IMPORT ALL FUNCTIONS ABOVE"""
 
-observed_K = {}
-for a in range(10, 60):
-    observed_K[a] = carrying_capacity(countries, a)['China']
-
-
-##LOAD IN/CREATE THE DATA
-summed_data = import_data()
-complete_dictionary = add_on(summed_data) #Dictionary by literal dates
-pickle.dump( complete_dictionary, open( "DATA/covid19_3-26.p", "wb" ) )
-complete_dictionary = pickle.load(open("DATA/covid19_3-26.p", 'rb'))
+"""LOAD IN AND SAVE DATA"""
+today = date.today()
+save_file = 'Data/covid19_' + today.strftime('%m-%d') + '.p'
+summed_data = import_data() #Loads in our data, raw
+complete_dictionary = add_on(summed_data) #Dictionary with the instantaneous totals in additino to runnig totals
+#complete_dictionary['China']['03/10/20'] = outputs [[cases_total, recoveries_total, deaths_total], [cases_instan, recover, death]]
+pickle.dump( complete_dictionary, open( save_file, "wb" ) )
+complete_dictionary = pickle.load(open("DATA/covid19_3-27.p", 'rb'))
 global date_array;
-date_array = list(complete_dictionary['US'].keys())
+date_array = list(complete_dictionary['US'].keys()) #
 date_array.sort(key=lambda date: datetime.strptime(date, "%m/%d/%y"))
 offset_dictionary = by_nth_case(complete_dictionary, 1) #Dictionary by day of first case: index 1:end
 tenth_dictionary = by_nth_case(complete_dictionary, 25) #Reorganize in terms of how many days before 1000 cases??
@@ -657,7 +657,7 @@ democracy_score(countries_stats)
 #A plot of population density and growth of cases MORE COUNTRIES; INITIAL LINEAR FITS
 population_score(countries_stats)
 #Fit the initial part of the graph exponentially; then plot the sigmoidal; r^2 value
-exponential_growths(countries, 40, True)
+exponential_growths(countries, 40, True) #GTFO
 #Linear fits on log cases
 xdata_vibes = {'Italy': [range(1, 15), range(16, 30)], 'US': [range(5, 17), range(18, 30)], 'Korea, South': [range(11, 23), range(24, 36)], 'China': [range(1, 17), range(18, 34)], 'Germany': [range(1, 14), range(15, 29)], 'Iran': [range(1, 15), range(16, 30)]}
 linear_fits(countries, xdata_vibes, True)
@@ -672,7 +672,7 @@ policy_plot(countries_subset) #Need the below data to do this
 response_times(countries_subset) #Need the below data to do this
 
 #Calculate policy effectiveness
-policy_efficacy(3) #input 3 for medical supplies; 4 for school closure; calculates at p-value = 0.001
+policy_efficacy(4) #input 3 for medical supplies; 4 for school closure; calculates at p-value = 0.001
 
 #Plot Policy effectiveness
 policy_efficacy_graph()
