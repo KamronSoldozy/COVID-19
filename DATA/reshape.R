@@ -1,0 +1,15 @@
+recover <- read.csv("recover_wide.csv", sep = ',', check.names=FALSE)
+death <- read.csv("deaths_wide.csv", sep = ',', check.names=FALSE)
+confirmed <- read.csv("confirmed_wide.csv", sep = ',', check.names=FALSE)
+library("reshape2")
+recoverL <- melt(recover, id.vars = c("Province/State", "Country/Region", "Lat", "Long"))
+deathL <- melt(death, id.vars = c("Province/State", "Country/Region", "Lat", "Long"))
+confirmedL <- melt(confirmed, id.vars = c("Province/State", "Country/Region", "Lat", "Long"))
+
+colnames(recoverL) = c("Province/State", "Country/Region", "Lat", "Long", "Date", "Value")
+colnames(deathL) = c("Province/State", "Country/Region", "Lat", "Long", "Date", "Value")
+colnames(confirmedL) = c("Province/State", "Country/Region", "Lat", "Long", "Date", "Value")
+
+write.csv(recoverL, 'recover_long.csv')
+write.csv(deathL, 'deaths_long.csv')
+write.csv(confirmedL, 'confirmed_long.csv')
