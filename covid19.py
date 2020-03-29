@@ -507,6 +507,8 @@ def policy_plot(countries):
         for b in range(0, len(US)):
             if val_subset[a][b] >0:
                 ax[a].axvline(val_subset[a][b], ymin=0, ymax=1, color=policy_colors[b], label = policy[b])
+            else:
+                ax[a].axvline(val_subset[a][b], ymin=0, ymax=0, color=policy_colors[b], label=policy[b])
     ax[1].legend()
     fig.suptitle("Policy Responses by Country")
     fig.text(0.5, 0.004, "Days Since First Confirmed Case", ha='center')
@@ -562,11 +564,12 @@ def policy_efficacy_graph():
     bar_width = 0.3
     opacity = 0.8
 
-    rects1 = plt.bar(index, mean_med, bar_width, yerr=std_med, alpha=opacity, color=policy_colors[3], label="Medical Supply Acquisition")
-    rects2 = plt.bar(index+bar_width, mean_school, bar_width, yerr=std_school, alpha=opacity, color=policy_colors[4], label="School Closure")
-
+    rects1 = plt.bar(index, mean_med, bar_width, yerr=std_med, alpha=opacity, color=policy_colors[3])
+    rects2 = plt.bar(index+bar_width, mean_school, bar_width, yerr=std_school, alpha=opacity)
+    #plt.tick_params(axis='x', which = 'both', bottom=False, top = False, labelbottom = False)
+    plt.xticks([0, .3], ['Medical Supply Acquisition', 'School Closure'])
+    #plt.legend()
     plt.xlabel("Policy")
-    plt.legend()
     plt.ylabel("Mean Days Until Significant Log Linear Growth Change")
     plt.title("Analyzing Log Linear Growth Change with Respect to Policy Onset Dates")
     font = {'family': 'DejaVu Sans', 'weight': 'bold', 'size': 16}
@@ -626,7 +629,7 @@ summed_data = import_data() #Loads in our data, raw
 complete_dictionary = add_on(summed_data) #Dictionary with the instantaneous totals in additino to runnig totals
 #complete_dictionary['China']['03/10/20'] = outputs [[cases_total, recoveries_total, deaths_total], [cases_instan, recover, death]]
 pickle.dump( complete_dictionary, open( save_file, "wb" ) )
-complete_dictionary = pickle.load(open("DATA/covid19_3-27.p", 'rb'))
+complete_dictionary = pickle.load(open("DATA/covid19_03-28.p", 'rb'))
 global date_array;
 date_array = list(complete_dictionary['US'].keys()) #
 date_array.sort(key=lambda date: datetime.strptime(date, "%m/%d/%y"))
@@ -640,7 +643,7 @@ mpl.style.use('seaborn')
 #mpl.style.use('default')
 colors = {'Italy': 'red', 'US': 'blue', 'Korea, South': 'green', 'Iran': 'orange', 'China': 'brown', 'Germany': 'purple', 'Spain': 'paleturquoise', 'France': 'orchid', 'United Kingdom': 'deeppink', 'Switzerland': 'sienna', 'Netherlands': 'lightslategray', 'Austria': 'palegreen'}
 colors_2 = ['red', 'blue', 'green', 'orange', 'brown', 'purple', 'paleturquoise', 'orchid', 'deeppink', 'sienna', 'lightslategray', 'palegreen', 'lightsalmon']
-countries = ['Italy', 'US', 'Korea, South', 'Iran', 'China', 'Germany']
+countries = ['Italy', 'US', 'Korea, South', 'Spain', 'China', 'Germany']
 plot_total_cases_datewise(countries)
 plot_total_cases_offset(countries)
 #Subplots with deaths, cases, and recoveries for many countries
@@ -659,7 +662,7 @@ population_score(countries_stats)
 #Fit the initial part of the graph exponentially; then plot the sigmoidal; r^2 value
 exponential_growths(countries, 40, True) #GTFO
 #Linear fits on log cases
-xdata_vibes = {'Italy': [range(1, 15), range(16, 30)], 'US': [range(5, 17), range(18, 30)], 'Korea, South': [range(11, 23), range(24, 36)], 'China': [range(1, 17), range(18, 34)], 'Germany': [range(1, 14), range(15, 29)], 'Iran': [range(1, 15), range(16, 30)]}
+xdata_vibes = {'Italy': [range(1, 15), range(16, 30)], 'US': [range(5, 17), range(18, 30)], 'Korea, South': [range(11, 23), range(24, 36)], 'China': [range(1, 17), range(18, 34)], 'Germany': [range(1, 14), range(15, 29)], 'Spain': [range(1, 15), range(16, 30)]}
 linear_fits(countries, xdata_vibes, True)
 linear_input = linear_fits(countries, xdata_vibes, False)
 countries_n = [13, 11, 11, 15, 12, 13]
